@@ -2,3 +2,6 @@
 .env
 __pycache__/
 logs/
+dbt_aq/target/
+dbt_aq/logs/
+dbt_aq/.user.yml

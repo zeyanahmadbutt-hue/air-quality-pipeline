@@ -31,3 +31,13 @@ Runs daily through Windows Task Scheduler, with logs written to logs/pipeline.lo
     ORDER BY avg_pm25 DESC;
 ## Next steps
 Orchestration with Airflow, dbt models on top of the table, and a cloud warehouse.
+## dbt layer
+A dbt project in `dbt_aq/` builds an analytics layer on top of the raw table:
+- `stg_air_quality` (view): adds local date and AQI category.
+- `daily_city_air_quality` (table): daily average and max PM2.5, AQI, and count of unhealthy hours per city.
+- 7 data tests: not-null checks, accepted city values, and a custom uniqueness test per city-hour.
+Run it:
+    cd dbt_aq
+    $env:POSTGRES_PASSWORD = "your_password"
+    dbt run --profiles-dir .
+    dbt test --profiles-dir .

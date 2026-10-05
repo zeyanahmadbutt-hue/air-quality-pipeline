@@ -1,0 +1,24 @@
+version: 2
+models:
+  - name: stg_air_quality
+    columns:
+      - name: city
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Islamabad', 'Lahore', 'Karachi', 'Faisalabad']
+      - name: observed_at
+        tests:
+          - not_null
+      - name: aqi_category
+        tests:
+          - not_null
+  - name: daily_city_air_quality
+    columns:
+      - name: city
+        tests:
+          - not_null
+      - name: observed_date
+        tests:
+          - not_null
