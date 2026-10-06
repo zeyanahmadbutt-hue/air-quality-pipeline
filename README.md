@@ -41,3 +41,22 @@ Run it:
     $env:POSTGRES_PASSWORD = "your_password"
     dbt run --profiles-dir .
     dbt test --profiles-dir .
+
+## Orchestration (Airflow)
+
+`dags/air_quality_dag.py` defines the DAG `air_quality_daily`, which runs daily at 04:00 UTC (09:00 Pakistan time):
+
+    ingest  ->  dbt_run  ->  dbt_test
+
+- `ingest` runs the Python pipeline (extract, transform, upsert load).
+- `dbt_run` builds the staging view and the daily mart.
+- `dbt_test` runs the 7 data tests. It only runs if `dbt_run` succeeded, and `dbt_run` only runs if `ingest` succeeded.
+- Each task retries twice with a 2 minute delay.
+
+Tested on Airflow 3.1.7 with Python 3.12 inside a GitHub Codespace, with PostgreSQL 16 in Docker. Airflow does not run on native Windows, so the local scheduler remains Windows Task Scheduler.
+
+The paths at the top of the DAG file (`PROJECT`, `PY`, `DBT`) match the Codespace layout; edit them for another machine.
+
+Run a single test of the whole chain:
+
+    airflow dags test air_quality_daily
